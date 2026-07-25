@@ -245,16 +245,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isMuted, onToggleMute 
             )}
           </div>
 
-          {/* Discord Button */}
-          <a 
-            href="https://discord.gg/gGqrFQRjmE" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="w-8 h-8 md:w-9 md:h-9 bg-moss-soft rounded-full flex items-center justify-center cursor-pointer hover:bg-moss transition-colors"
-          >
-            <img src="/icons/discord.svg" alt="Discord" className="w-4 h-4 md:w-5 md:h-5" draggable={false} />
-          </a>
-
           {/* Link Button */}
           <div className="relative">
             <div 
@@ -330,20 +320,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isMuted, onToggleMute 
           </h1>
         </div>
         
-        {/* Instructional Text with enhanced styling */}
+        {/* Donation messaging */}
         <div className="relative z-10 mb-8 px-4">
-          <div className="font-pixelify font-normal text-lg md:text-xl lg:text-2xl text-center tracking-[0] leading-[normal] max-w-4xl">
-            <span className="text-white">
-              Choose your school to <span className="text-support font-semibold relative">
-                support
-                <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-support opacity-50"></div>
-              </span>! <br />
-            </span>
-            <span className="text-white">Or go <span className="text-clay font-semibold relative">
-              destroy
-              <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-clay opacity-50"></div>
-            </span> the others!</span>
-            <span className="block mt-4 text-sunleaf donation-glow text-base md:text-lg lg:text-xl">
+          <div className="font-pixelify font-normal text-center tracking-[0] leading-[normal] max-w-4xl">
+            <span className="block text-sunleaf donation-glow text-base md:text-lg lg:text-xl">
               Winner gets <span className="font-bold">$250</span> donated in their school&apos;s name to plant trees.
             </span>
           </div>

@@ -2446,16 +2446,6 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
                 )}
             </div>
 
-            {/* Discord Button */}
-            <a 
-              href="https://discord.gg/gGqrFQRjmE" 
-              target="_blank" 
-              rel="noopener noreferrer"
-            className="w-8 h-8 md:w-9 md:h-9 bg-moss-soft rounded-full flex items-center justify-center cursor-pointer hover:bg-moss transition-colors"
-            >
-            <img src="/icons/discord.svg" alt="Discord" className="w-4 h-4 md:w-5 md:h-5" draggable={false} />
-            </a>
-
             {/* Link Button */}
               <div className="relative">
               <div 
