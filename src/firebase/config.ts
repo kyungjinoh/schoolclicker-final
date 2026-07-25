@@ -1,7 +1,7 @@
 import { initializeApp, getApps } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getDatabase } from "firebase/database";
-import { getStorage } from "firebase/storage";
+import { getFirestore, type Firestore } from "firebase/firestore";
+import { getDatabase, type Database } from "firebase/database";
+import { getStorage, type FirebaseStorage } from "firebase/storage";
 
 const requiredEnvVars = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -14,34 +14,40 @@ const requiredEnvVars = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 } as const;
 
-const missingKeys = Object.entries(requiredEnvVars)
+export const missingFirebaseEnvKeys = Object.entries(requiredEnvVars)
   .filter(([, value]) => typeof value !== "string" || value.length === 0)
   .map(([key]) => key);
 
-if (missingKeys.length > 0) {
-  throw new Error(
-    `Missing Firebase environment variables: ${missingKeys.join(
-        ", ",
-    )}. Did you forget to configure your .env file?`,
+export const isFirebaseConfigured = missingFirebaseEnvKeys.length === 0;
+
+if (!isFirebaseConfigured) {
+  console.error(
+    `Missing Firebase environment variables: ${missingFirebaseEnvKeys.join(
+      ", ",
+    )}. Set VITE_FIREBASE_* in Vercel Project Settings → Environment Variables, then redeploy.`,
   );
 }
 
-const firebaseConfig = {
-  apiKey: requiredEnvVars.apiKey,
-  authDomain: requiredEnvVars.authDomain,
-  databaseURL: requiredEnvVars.databaseURL,
-  projectId: requiredEnvVars.projectId,
-  storageBucket: requiredEnvVars.storageBucket,
-  messagingSenderId: requiredEnvVars.messagingSenderId,
-  appId: requiredEnvVars.appId,
-  measurementId: requiredEnvVars.measurementId,
-};
+const firebaseApp =
+  isFirebaseConfigured
+    ? getApps().length === 0
+      ? initializeApp({
+          apiKey: requiredEnvVars.apiKey as string,
+          authDomain: requiredEnvVars.authDomain as string,
+          databaseURL: requiredEnvVars.databaseURL as string,
+          projectId: requiredEnvVars.projectId as string,
+          storageBucket: requiredEnvVars.storageBucket as string,
+          messagingSenderId: requiredEnvVars.messagingSenderId as string,
+          appId: requiredEnvVars.appId as string,
+          measurementId: requiredEnvVars.measurementId as string,
+        })
+      : getApps()[0]!
+    : null;
 
-export const app =
-  getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-
-export const db = getFirestore(app);
-export const realtimeDb = getDatabase(app);
-export const storage = getStorage(app);
+// Call sites only run after App gates on isFirebaseConfigured
+export const app = firebaseApp;
+export const db = (firebaseApp ? getFirestore(firebaseApp) : null) as Firestore;
+export const realtimeDb = (firebaseApp ? getDatabase(firebaseApp) : null) as Database;
+export const storage = (firebaseApp ? getStorage(firebaseApp) : null) as FirebaseStorage;
 
 export default app;

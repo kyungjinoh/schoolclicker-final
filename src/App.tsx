@@ -6,7 +6,25 @@ import { LeaderboardPage } from './components/LeaderboardPage';
 import { GamePage } from './components/GamePage';
 import { SchoolSupportPage } from './components/SchoolSupportPage';
 import { SchoolDataProvider } from './contexts/SchoolDataContext';
+import { isFirebaseConfigured, missingFirebaseEnvKeys } from './firebase/config';
 import './index.css';
+
+function MissingFirebaseConfigScreen() {
+  return (
+    <div className="eco-atmosphere w-screen h-screen-dvh flex flex-col items-center justify-center px-6 text-center select-none">
+      <h1 className="font-pixelify text-sunleaf text-3xl md:text-4xl mb-4 donation-glow">
+        Firebase config missing
+      </h1>
+      <p className="font-pingfang text-white/90 text-base md:text-lg max-w-xl mb-6">
+        This deploy has no <span className="text-sunleaf">VITE_FIREBASE_*</span> environment
+        variables. Add them in Vercel → Project Settings → Environment Variables, then redeploy.
+      </p>
+      <p className="font-pixelify text-support text-sm max-w-lg">
+        Missing: {missingFirebaseEnvKeys.join(', ')}
+      </p>
+    </div>
+  );
+}
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -153,6 +171,10 @@ function App() {
     setIsMuted(newMuteState);
     localStorage.setItem('isMuted', newMuteState.toString());
   };
+
+  if (!isFirebaseConfigured) {
+    return <MissingFirebaseConfigScreen />;
+  }
 
   if (isLoading || !firebaseLoaded) {
     return <LoadingPage onFirebaseLoaded={() => setFirebaseLoaded(true)} />;

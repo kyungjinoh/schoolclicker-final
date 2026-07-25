@@ -1,13 +1,13 @@
 import { getFunctions, httpsCallable } from "firebase/functions";
-import { app } from "./config";
+import { app, isFirebaseConfigured } from "./config";
 
-const functions = getFunctions(app);
-const updateScoreCallable = httpsCallable(functions, "updateScore");
-const addSchoolCallable = httpsCallable(functions, "addSchool");
-const createSessionCallable = httpsCallable(functions, "createClickerSession");
-const recordHourlyUserCallable = httpsCallable(functions, "recordHourlyUser");
-const initializeOnlinePresenceCallable = httpsCallable(functions, "initializeOnlinePresence");
-const removeOnlinePresenceCallable = httpsCallable(functions, "removeOnlinePresence");
+const functions = isFirebaseConfigured && app ? getFunctions(app) : null;
+const updateScoreCallable = functions ? httpsCallable(functions, "updateScore") : null;
+const addSchoolCallable = functions ? httpsCallable(functions, "addSchool") : null;
+const createSessionCallable = functions ? httpsCallable(functions, "createClickerSession") : null;
+const recordHourlyUserCallable = functions ? httpsCallable(functions, "recordHourlyUser") : null;
+const initializeOnlinePresenceCallable = functions ? httpsCallable(functions, "initializeOnlinePresence") : null;
+const removeOnlinePresenceCallable = functions ? httpsCallable(functions, "removeOnlinePresence") : null;
 
 const SESSION_STORAGE_KEY = "schoolClicker_sessionToken";
 const CLIENT_ID_COOKIE_NAME = "_ga_school_clicker"; // Similar to GA4's _ga cookie (Device ID)
@@ -168,7 +168,7 @@ const requestNewSessionToken = async (): Promise<string> => {
     throw new Error("Session tokens can only be issued in a browser environment.");
   }
 
-  const response = await createSessionCallable({
+  const response = await createSessionCallable!({
     userAgent: navigator.userAgent,
   });
 
@@ -231,7 +231,7 @@ export const callUpdateScore = async (
   }
 
   try {
-    await updateScoreCallable(payload);
+    await updateScoreCallable!(payload);
   } catch (error: any) {
     const code: string | undefined = error?.code;
     const detailsCode: string | undefined = error?.details?.code;
@@ -267,7 +267,7 @@ interface AddSchoolResponse {
 }
 
 export const callAddSchool = async (payload: AddSchoolPayload): Promise<AddSchoolResponse> => {
-  const response = await addSchoolCallable(payload);
+  const response = await addSchoolCallable!(payload);
   return response.data as AddSchoolResponse;
 };
 
@@ -300,7 +300,7 @@ export const callRecordHourlyUser = async (
   };
 
   try {
-    const response = await recordHourlyUserCallable(payload);
+    const response = await recordHourlyUserCallable!(payload);
     return response.data as RecordHourlyUserResponse;
   } catch (error: any) {
     const code: string | undefined = error?.code;
@@ -345,7 +345,7 @@ export const callInitializeOnlinePresence = async (
   };
 
   try {
-    const response = await initializeOnlinePresenceCallable(payload);
+    const response = await initializeOnlinePresenceCallable!(payload);
     return response.data as InitializeOnlinePresenceResponse;
   } catch (error: any) {
     const code: string | undefined = error?.code;
@@ -387,7 +387,7 @@ export const callRemoveOnlinePresence = async (
   };
 
   try {
-    const response = await removeOnlinePresenceCallable(payload);
+    const response = await removeOnlinePresenceCallable!(payload);
     return response.data as RemoveOnlinePresenceResponse;
   } catch (error: any) {
     // Silently handle errors - removal is cleanup operation
