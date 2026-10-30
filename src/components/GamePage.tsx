@@ -81,7 +81,7 @@ export const GamePage: React.FC<GamePageProps> = ({ isMuted, onToggleMute }) => 
                 <div className="w-1 h-1 bg-support/70 rounded-full animate-ping delay-500"></div>
               </div>
               <span className="font-pixelify font-normal text-support text-xs tracking-[0] leading-[normal]">
-                40k+ active students
+                Fall–Winter · $250 for trees and a school
               </span>
             </div>
           </div>
@@ -93,7 +93,7 @@ export const GamePage: React.FC<GamePageProps> = ({ isMuted, onToggleMute }) => 
               <div className="w-1 h-1 bg-support/70 rounded-full animate-ping delay-500"></div>
             </div>
             <span className="font-pixelify font-normal text-support text-xs tracking-[0] leading-[normal]">
-              40k+ active students
+              $250 for trees and a school
             </span>
           </div>
         </div>

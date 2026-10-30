@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCountdown } from "../hooks/useCountdown";
+import { PreviousSeasonNote } from "./PreviousSeasonNote";
+import { RACE_LABEL, RACE_LABEL_SHORT, SEASON_END, SEASON_END_LABEL, SEASON_NAME } from "../season";
 
 interface LandingPageProps {
   isMuted: boolean;
@@ -53,8 +55,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isMuted, onToggleMute 
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Countdown to December 3rd, 2025 at 3:00 PM EST
-  const targetDate = useMemo(() => new Date('2025-12-03T15:00:00-05:00'), []);
+  const targetDate = useMemo(() => SEASON_END, []);
   const countdown = useCountdown(targetDate);
 
   // iPad-specific: Reset scroll position on component mount to prevent content drift
@@ -210,7 +211,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isMuted, onToggleMute 
                 <div className="w-2 h-2 bg-support/70 rounded-full animate-ping delay-500"></div>
               </div>
               <span className="font-pixelify font-normal text-support text-sm xl:text-base tracking-[0] leading-[normal]">
-                Racing for $250 for trees
+                {RACE_LABEL}
               </span>
             </div>
           </div>
@@ -222,7 +223,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isMuted, onToggleMute 
               <div className="w-1 h-1 bg-support/70 rounded-full animate-ping delay-500"></div>
             </div>
             <span className="font-pixelify font-normal text-support text-xs tracking-[0] leading-[normal]">
-              Racing for $250 for trees
+              {RACE_LABEL_SHORT}
             </span>
           </div>
         </div>
@@ -292,7 +293,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isMuted, onToggleMute 
 
       {/* Main Content Area */}
       <div 
-        className="flex-1 bg-canopy flex flex-col items-center justify-center relative overflow-hidden main-content-area"
+        className="flex-1 bg-canopy flex flex-col items-center justify-center relative overflow-hidden main-content-area pb-28"
         style={{
           paddingTop: isIPad ? 'calc(10vh + 20px)' : undefined,
           paddingBottom: isIPad ? 'calc(12vh + 20px)' : undefined,
@@ -309,33 +310,47 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isMuted, onToggleMute 
           <div className="absolute bottom-[10vh] right-[8vw] w-16 h-16 border border-sunleaf rounded-full animate-pulse delay-700"></div>
         </div>
 
-        {/* Main Title with enhanced styling */}
-        <div className="relative z-10 mb-8 px-4">
-          <h1 className="font-pixelify font-bold text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-center tracking-[0] leading-[normal] text-white relative max-w-4xl">
-            <span className="relative z-10">Your School<br /><span className="text-sunleaf font-black text-5xl md:text-6xl lg:text-7xl xl:text-8xl animate-pulse drop-shadow-donation">VS</span><br />100+ Schools</span>
-            {/* Subtle glow effect */}
-            <div className="absolute inset-0 text-white/20 blur-sm animate-pulse">
-              Your School<br />VS<br />100+ Schools
-            </div>
+        {/* Main Title */}
+        <div className="relative z-10 mb-4 px-4 md:mb-5">
+          <p className="mb-2 text-center font-pixelify text-sm text-support md:text-base">
+            {SEASON_NAME} is underway
+          </p>
+          <h1 className="relative max-w-4xl text-balance text-center font-pixelify text-4xl font-bold leading-[1.05] tracking-[0] text-white md:text-5xl lg:text-6xl xl:text-7xl">
+            Your School
+            <span className="block font-black text-5xl text-sunleaf drop-shadow-donation md:text-6xl lg:text-7xl xl:text-8xl">VS</span>
+            100+ Schools
           </h1>
         </div>
-        
-        {/* Donation messaging */}
-        <div className="relative z-10 mb-8 px-4">
-          <div className="font-pixelify font-normal text-center tracking-[0] leading-[normal] max-w-4xl">
-            <span className="block text-sunleaf donation-glow text-base md:text-lg lg:text-xl">
-              Winner gets <span className="font-bold">$250</span> donated in their school&apos;s name to plant trees.
+
+        {/* Why you click */}
+        <div className="relative z-10 mb-5 max-w-xl px-5 text-center md:mb-6">
+          <p className="text-balance font-pixelify text-lg leading-snug text-white md:text-2xl">
+            Click for your school. The winner gets <span className="font-bold text-sunleaf">$250</span> donated in their name.
+          </p>
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-pixelify text-sm text-white md:text-base">
+            <span className="inline-flex items-center gap-2">
+              <svg className="h-4 w-4 text-sunleaf" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 3c4 3 8 5 8 10 0 4-3 7-7 8-1-3-1-5-3-7-2 2-2 4-3 7-4-1-7-4-7-8 0-5 5-7 12-10z" />
+              </svg>
+              Plant trees
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <svg className="h-4 w-4 text-navtint" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M3 10.5 12 3l9 7.5V21H3V10.5z" />
+                <path d="M10 21v-6h4v6" fill="#0a1a12" />
+              </svg>
+              Build a school
             </span>
           </div>
         </div>
 
         {/* Countdown Timer */}
         {!countdown.isExpired && (
-          <div className="relative z-10 mb-12 px-4">
-            <div className="max-w-4xl mx-auto">
-              <div className="bg-gradient-to-r from-moss/30 to-field/25 backdrop-blur-sm border-2 border-support/60 rounded-xl p-2 md:p-3">
-                <h3 className="font-pixelify font-bold text-sunleaf text-xs md:text-sm mb-2 text-center donation-glow">
-                  $250 Tree Donation Race Ends In:
+          <div className="relative z-10 mb-6 px-4">
+            <div className="mx-auto max-w-4xl">
+              <div className="rounded-xl border-2 border-support/60 bg-moss/25 p-2 md:p-3">
+                <h3 className="mb-2 text-center font-pixelify text-xs font-bold text-sunleaf md:text-sm">
+                  {SEASON_NAME} ends {SEASON_END_LABEL}
                 </h3>
                 <div className="flex justify-center gap-2 md:gap-3">
                   <div className="flex flex-col items-center">
@@ -344,7 +359,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isMuted, onToggleMute 
                         {countdown.days}
                       </span>
                     </div>
-                    <span className="font-pixelify text-[10px] md:text-xs text-support/80 mt-0.5">Days</span>
+                    <span className="font-pixelify text-[10px] md:text-xs text-white mt-0.5">Days</span>
                   </div>
                   <div className="flex flex-col items-center">
                     <div className="bg-black/50 border-2 border-support/50 rounded-lg px-2 py-1 md:px-3 md:py-2 min-w-[50px] md:min-w-[65px]">
@@ -352,7 +367,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isMuted, onToggleMute 
                         {countdown.hours}
                       </span>
                     </div>
-                    <span className="font-pixelify text-[10px] md:text-xs text-support/80 mt-0.5">Hours</span>
+                    <span className="font-pixelify text-[10px] md:text-xs text-white mt-0.5">Hours</span>
                   </div>
                   <div className="flex flex-col items-center">
                     <div className="bg-black/50 border-2 border-support/50 rounded-lg px-2 py-1 md:px-3 md:py-2 min-w-[50px] md:min-w-[65px]">
@@ -360,7 +375,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isMuted, onToggleMute 
                         {countdown.minutes}
                       </span>
                     </div>
-                    <span className="font-pixelify text-[10px] md:text-xs text-support/80 mt-0.5">Minutes</span>
+                    <span className="font-pixelify text-[10px] md:text-xs text-white mt-0.5">Minutes</span>
                   </div>
                   <div className="flex flex-col items-center">
                     <div className="bg-black/50 border-2 border-support/50 rounded-lg px-2 py-1 md:px-3 md:py-2 min-w-[50px] md:min-w-[65px]">
@@ -368,7 +383,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isMuted, onToggleMute 
                         {countdown.seconds}
                       </span>
                     </div>
-                    <span className="font-pixelify text-[10px] md:text-xs text-support/80 mt-0.5">Seconds</span>
+                    <span className="font-pixelify text-[10px] md:text-xs text-white mt-0.5">Seconds</span>
                   </div>
                 </div>
               </div>
@@ -381,6 +396,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isMuted, onToggleMute 
         <div className="absolute top-[25vh] right-[8vw] w-1.5 h-1.5 bg-sunleaf rounded-full animate-ping delay-1000 opacity-60"></div>
         <div className="absolute bottom-[25vh] left-[8vw] w-1 h-1 bg-clay rounded-full animate-ping delay-500 opacity-60"></div>
         <div className="absolute bottom-[15vh] right-[5vw] w-2 h-2 bg-support rounded-full animate-ping delay-700 opacity-60"></div>
+
+        <PreviousSeasonNote />
 
         {/* Subtle grid pattern */}
         <div className="absolute inset-0 opacity-[0.02]">

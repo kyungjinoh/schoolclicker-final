@@ -4,6 +4,7 @@ import { schoolNameToSlug } from "../utils/schoolUtils";
 import { useSchoolData } from "../contexts/SchoolDataContext";
 import { submitSchoolRequest } from "../firebase/schoolService";
 import { useCountdown } from "../hooks/useCountdown";
+import { RACE_LABEL, RACE_LABEL_SHORT, SEASON_END, SEASON_END_LABEL, SEASON_NAME } from "../season";
 
 interface LeaderboardPageProps {
   isMuted: boolean;
@@ -62,8 +63,7 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ isMuted, onTog
   const [forceUpdate, setForceUpdate] = useState(0);
   const [selectedRegion, setSelectedRegion] = useState<string>("ALL");
   
-  // Countdown to December 3rd, 2025 at 3:00 PM EST
-  const targetDate = useMemo(() => new Date('2025-12-03T15:00:00-05:00'), []);
+  const targetDate = useMemo(() => SEASON_END, []);
   const countdown = useCountdown(targetDate);
   
   // Animated scores for top 3 schools (visual only, not stored)
@@ -993,7 +993,7 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ isMuted, onTog
                 <div className="w-2 h-2 bg-support/70 rounded-full animate-ping delay-500"></div>
               </div>
               <span className="font-pixelify font-normal text-support text-sm xl:text-base tracking-[0] leading-[normal]">
-                Racing for $250 for trees
+                {RACE_LABEL}
               </span>
             </div>
           </div>
@@ -1005,7 +1005,7 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ isMuted, onTog
               <div className="w-1 h-1 bg-support/70 rounded-full animate-ping delay-500"></div>
             </div>
             <span className="font-pixelify font-normal text-support text-xs tracking-[0] leading-[normal]">
-              Racing for $250 for trees
+              {RACE_LABEL_SHORT}
             </span>
           </div>
         </div>
@@ -1071,8 +1071,8 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ isMuted, onTog
           Leaderboard
         </div>
 
-        <div className="font-pixelify font-normal text-support text-sm md:text-base text-center tracking-[0] leading-[normal] mb-2 px-2">
-          #1 school wins a <span className="text-sunleaf font-bold">$250</span> donation planted in their name
+        <div className="font-pixelify font-normal text-white text-sm md:text-base text-center tracking-[0] leading-[normal] mb-2 px-2 text-balance">
+          #1 gets <span className="text-sunleaf font-bold">$250</span> in their name — trees planted, and a school built
         </div>
 
         {/* Schools Competing Counter */}
@@ -1082,33 +1082,36 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ isMuted, onTog
             <div className="w-1 h-1 bg-support/70 rounded-full animate-ping delay-500"></div>
           </div>
           <span className="font-pixelify font-normal text-support text-sm md:text-base tracking-[0] leading-[normal]">
-            Join {allSchools.length} schools competing for the planet
+            Join {allSchools.length} schools this {SEASON_NAME}
           </span>
         </div>
 
         {/* Countdown Timer */}
         {!countdown.isExpired && (
           <div className="flex justify-center mb-2 px-2">
-            <div className="bg-gradient-to-r from-moss/30 to-field/25 backdrop-blur-sm border border-support/60 rounded py-1 px-3">
+            <div className="bg-moss/25 border border-support/60 rounded py-1 px-3">
+              <p className="font-pixelify text-[10px] md:text-xs text-sunleaf text-center mb-0.5">
+                {SEASON_NAME} ends {SEASON_END_LABEL}
+              </p>
               <div className="flex items-center gap-1 md:gap-1.5">
                 <div className="flex items-baseline gap-0.5">
                   <span className="font-pixelify font-bold text-base md:text-xl text-white">{countdown.days}</span>
-                  <span className="font-pixelify text-[10px] md:text-xs text-support/80">d</span>
+                  <span className="font-pixelify text-[10px] md:text-xs text-white">d</span>
                 </div>
                 <span className="text-support text-sm">:</span>
                 <div className="flex items-baseline gap-0.5">
                   <span className="font-pixelify font-bold text-base md:text-xl text-white">{countdown.hours}</span>
-                  <span className="font-pixelify text-[10px] md:text-xs text-support/80">h</span>
+                  <span className="font-pixelify text-[10px] md:text-xs text-white">h</span>
                 </div>
                 <span className="text-support text-sm">:</span>
                 <div className="flex items-baseline gap-0.5">
                   <span className="font-pixelify font-bold text-base md:text-xl text-white">{countdown.minutes}</span>
-                  <span className="font-pixelify text-[10px] md:text-xs text-support/80">m</span>
+                  <span className="font-pixelify text-[10px] md:text-xs text-white">m</span>
                 </div>
                 <span className="text-support text-sm">:</span>
                 <div className="flex items-baseline gap-0.5">
                   <span className="font-pixelify font-bold text-base md:text-xl text-white">{countdown.seconds}</span>
-                  <span className="font-pixelify text-[10px] md:text-xs text-support/80">s</span>
+                  <span className="font-pixelify text-[10px] md:text-xs text-white">s</span>
                 </div>
               </div>
             </div>
@@ -1264,7 +1267,7 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ isMuted, onTog
           <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[100] overflow-y-auto">
             <div className="bg-canopy-surface border-2 border-white/80 rounded-lg p-6 w-[400px] max-w-[90vw] my-8">
               <h2 className="text-2xl font-pixelify font-normal text-sunleaf mb-2 text-center">Add School</h2>
-              <p className="text-sm font-pingfang text-support text-center mb-6">Join the race for a $250 tree donation</p>
+              <p className="text-sm font-pingfang text-white text-center mb-6">Join the race for $250 — trees and a school</p>
               
               <div className="mb-4">
                 <label className="block text-sm font-pingfang font-normal text-white mb-2">

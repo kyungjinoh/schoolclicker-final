@@ -7,6 +7,8 @@ import { useSchoolData } from "../contexts/SchoolDataContext";
 import { useOnlinePresence } from "../hooks/useOnlinePresence";
 import { ref, push, onValue, off, serverTimestamp, query, orderByChild, limitToLast, get, remove } from "firebase/database";
 import { realtimeDb } from "../firebase/config";
+import { ForestPausePopup } from "./ForestPausePopup";
+import { CLICKS_PER_FOREST_PAUSE, PERSONAL_CLICK_STORAGE_KEY, RACE_LABEL, RACE_LABEL_SHORT } from "../season";
 
 interface SchoolSupportPageProps {
   isMuted: boolean;
@@ -1040,7 +1042,7 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
   // Stable rotating messages array - doesn't change based on score
   const rotatingMessages = [
     "Every tap plants hope",
-    "Win $250 for your school's trees",
+    "Win $250 for trees and a school",
     "You're making a difference",
     "Clicks become canopy",
     "Your school needs you",
@@ -1096,7 +1098,7 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
     "You're moving forward",
     "Keep pushing",
     "Stay consistent",
-    "Plant wins for your school",
+    "Plant trees. Raise a school.",
     "Keep the tempo",
     "Stay focused",
     "You're doing well",
@@ -1111,7 +1113,7 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
     "You're contributing",
     "Keep the momentum",
     "Stay determined",
-    "$250 donated in the winner's name"
+    "$250 in the winner's name: trees and a school"
   ];
   const [floatingNumbers, setFloatingNumbers] = useState<Array<{id: number, value: number, x: number, y: number}>>([]);
   const [showChallengePage, setShowChallengePage] = useState(false);
@@ -1133,6 +1135,9 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
   const lastInteractionTime = useRef(0);
   const isProcessingTouch = useRef(false);
   const lastTouchTime = useRef(0);
+  const personalClicksRef = useRef<number | null>(null);
+  const [showForestPause, setShowForestPause] = useState(false);
+  const [forestPauseClicks, setForestPauseClicks] = useState(CLICKS_PER_FOREST_PAUSE);
   
   // Calculate current rank based on localStorage
   const calculateCurrentRank = (schoolName: string, currentScore: number): number => {
@@ -1285,7 +1290,7 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
 
   // Challenge modal rotating messages
   const challengeModalMessages = [
-    "Win $250 planted in your school's name.\nShare so no one misses out!",
+    "Win $250 in your school's name — trees and a school.\nShare so no one misses out!",
     "Challenge another school —\nthe winner grows the forest."
   ];
   
@@ -1902,6 +1907,21 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
     if (event.type.startsWith('mouse') && (isProcessingTouch.current || (now - lastTouchTime.current) < 500)) {
       return;
     }
+
+    if (personalClicksRef.current === null) {
+      const stored = Number(localStorage.getItem(PERSONAL_CLICK_STORAGE_KEY) || "0");
+      personalClicksRef.current = Number.isFinite(stored) && stored > 0 ? Math.floor(stored) : 0;
+    }
+    personalClicksRef.current += 1;
+    try {
+      localStorage.setItem(PERSONAL_CLICK_STORAGE_KEY, String(personalClicksRef.current));
+    } catch {
+      // Clicking still counts in memory if storage is blocked.
+    }
+    if (personalClicksRef.current % CLICKS_PER_FOREST_PAUSE === 0) {
+      setForestPauseClicks(personalClicksRef.current);
+      setShowForestPause(true);
+    }
     
     // Use immediate score update for all devices to test if batching is the issue
     setScore(prev => {
@@ -2078,7 +2098,7 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
           </div>
           <h2 className="font-pixelify text-white text-2xl mb-2">Virus Effect</h2>
           <p className="font-pingfang text-white/80 text-sm leading-relaxed">
-            SchoolClicker is more than a game — it&apos;s a canopy movement. Spread it beyond your walls so your school can win the <span className="text-sunleaf font-semibold">$250 tree donation</span> planted in their name.
+            SchoolClicker is more than a game — it&apos;s a canopy movement. Spread it beyond your walls so your school can win the <span className="text-sunleaf font-semibold">$250</span> donated in their name — trees planted, and a school built.
             <span className="block mt-2 text-support">
               The school that spreads the movement the most will earn twice the points of the winning school.
             </span>
@@ -2368,7 +2388,7 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
                    <div className="w-2 h-2 bg-support/70 rounded-full animate-ping delay-500"></div>
                  </div>
                  <span className="font-pixelify font-normal text-support text-sm xl:text-base tracking-[0] leading-[normal]">
-                   Racing for $250 for trees
+                   {RACE_LABEL}
                  </span>
                </div>
              </div>
@@ -2380,7 +2400,7 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
               <div className="w-1 h-1 bg-support/70 rounded-full animate-ping delay-500"></div>
             </div>
             <span className="font-pixelify font-normal text-support text-xs tracking-[0] leading-[normal]">
-              Racing for $250 for trees
+              {RACE_LABEL_SHORT}
             </span>
           </div>
           
@@ -2519,7 +2539,7 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
             <p className={`font-pixelify font-normal text-sm lg:text-lg lg:text-lg xl:text-lg 2xl:text-lg 3xl:text-lg text-center tracking-[0] leading-[normal] animate-pulse ${
             score === 0 ? 'text-support' : (rotatingMessages[rotatingTextIndex].startsWith('Ur among') ? 'text-support' : 'text-sunleaf')
           }`}>
-             {score === 0 ? `Click to help plant $250 for ${schoolDisplayName || 'your school'}` : rotatingMessages[rotatingTextIndex]}
+             {score === 0 ? `Click so ${schoolDisplayName || 'your school'} can win $250 for trees and a school` : rotatingMessages[rotatingTextIndex]}
           </p>
           </div>
         </div>
@@ -3326,6 +3346,12 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
               onTouchStart={(e) => handleResizeStartTouch(e, 'top')}
             />
           </div>
+      )}
+      {showForestPause && (
+        <ForestPausePopup
+          clicks={forestPauseClicks}
+          onClose={() => setShowForestPause(false)}
+        />
       )}
     </>
   );

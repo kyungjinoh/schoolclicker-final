@@ -98,8 +98,8 @@ export const LoadingPage: React.FC<LoadingPageProps> = ({ onFirebaseLoaded }) =>
           <div className="text-sunleaf text-lg md:text-xl lg:text-2xl donation-glow mb-2">
             Win for your school. $250 donated in their name.
           </div>
-          <div className="text-support/80 text-sm md:text-base">
-            Every click helps plant trees for the winning school.
+          <div className="text-white text-sm md:text-base">
+            Fall–Winter is underway. Clicks plant trees and help build a school.
           </div>
         </div>
 

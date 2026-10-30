@@ -5,7 +5,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Canopy Competition — dusk under forest cover; clicks plant something real */
+/* Canopy competition — fall-winter dusk. Clicks plant trees and help build a school. */
 :root {
   --bg: oklch(0.12 0.028 145);
   --surface: oklch(0.17 0.032 145);
@@ -106,10 +106,12 @@ html, body {
   }
 }
 
-/* Soft forest atmosphere behind page shells (layout unchanged) */
+/* Late-autumn forest: cool dusk overhead, amber leaf-light low, canopy green still in charge */
 .eco-atmosphere {
   background-color: var(--canopy-hex);
   background-image:
+    radial-gradient(ellipse 90% 42% at 50% -8%, oklch(0.34 0.04 230 / 0.38), transparent 58%),
+    radial-gradient(ellipse 48% 36% at 6% 100%, oklch(0.46 0.09 62 / 0.22), transparent 52%),
     radial-gradient(ellipse 80% 50% at 20% 10%, oklch(0.28 0.06 145 / 0.45), transparent 55%),
     radial-gradient(ellipse 70% 45% at 85% 80%, oklch(0.32 0.07 155 / 0.35), transparent 50%),
     radial-gradient(ellipse 50% 40% at 50% 50%, oklch(0.22 0.04 140 / 0.4), transparent 60%);
@@ -136,12 +138,17 @@ html, body {
   animation: leaf-drift 4.5s ease-in-out infinite;
 }
 
+.cause-popup {
+  animation: fade-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-leaf-drift,
   .animate-bounce-arrow,
   .animate-bounce-button,
   .animate-ping,
-  .animate-pulse {
+  .animate-pulse,
+  .cause-popup {
     animation: none !important;
   }
 }
