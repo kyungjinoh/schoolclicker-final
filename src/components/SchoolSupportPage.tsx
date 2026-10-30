@@ -1030,6 +1030,33 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
     }
   }, [firebaseSchools, schoolDisplayName, schoolName]);
 
+  // The previous image can stay in the browser cache under the same address.
+  // Load a fresh copy off-screen and only then show it, so the old picture never paints.
+  const [visibleLogo, setVisibleLogo] = useState<string | null>(null);
+  useEffect(() => {
+    if (!schoolLogo) {
+      setVisibleLogo(null);
+      return;
+    }
+
+    const parsed = new URL(schoolLogo);
+    parsed.searchParams.set("cb", String(Date.now()));
+    const freshUrl = parsed.toString();
+    const image = new Image();
+    let cancelled = false;
+    image.onload = () => {
+      if (!cancelled) setVisibleLogo(freshUrl);
+    };
+    image.onerror = () => {
+      if (!cancelled) setVisibleLogo(null);
+    };
+    image.src = freshUrl;
+
+    return () => {
+      cancelled = true;
+    };
+  }, [schoolLogo]);
+
   // Stable rotating messages array - doesn't change based on score
   const rotatingMessages = [
     "Every tap plants hope",
@@ -2574,11 +2601,11 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
               onDrag={(e) => e.preventDefault()}
               onContextMenu={(e) => e.preventDefault()}
           >
-            {schoolLogo && (
+            {visibleLogo && (
             <img
               className="w-full h-full object-contain"
               alt="School Logo"
-                src={schoolLogo}
+                src={visibleLogo}
               draggable={false}
               onContextMenu={(e) => e.preventDefault()}
               onTouchMove={(e) => e.preventDefault()}
