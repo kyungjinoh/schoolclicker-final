@@ -52,14 +52,6 @@ export const getAllSchools = async (): Promise<School[]> => {
     return schoolsPromise;
   }
 
-  if (schoolNameToIdCache.size > 0) {
-    // Return cached data if available (convert cache back to School array)
-    const cachedData = localStorage.getItem('staticSchoolData');
-    if (cachedData) {
-      return JSON.parse(cachedData);
-    }
-  }
-
   isLoadingSchools = true;
 
   schoolsPromise = (async () => {
@@ -242,19 +234,6 @@ export const updateSchoolScoreByName = async (schoolName: string, scoreChanges: 
     await callUpdateScore(schoolId, clampedDelta);
   } catch (error) {
     console.error('❌ [FIREBASE DEBUG] Cloud Function score update failed:', error);
-    throw error;
-  }
-};
-
-// ADMIN ONLY: Update school logo (only admin can use this)
-export const updateSchoolLogo = async (schoolId: string, newLogoUrl: string): Promise<void> => {
-  try {
-    const schoolRef = doc(db, SCHOOLS_COLLECTION, schoolId);
-    await updateDoc(schoolRef, {
-      schoolLogo: newLogoUrl
-    });
-  } catch (error) {
-    console.error('Error updating school logo:', error);
     throw error;
   }
 };

@@ -1007,35 +1007,28 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
     };
   }, [isDragging, isResizing, dragOffset, chatPosition, chatSize, resizeDirection]);
 
-  // Get school logo from Firebase data with localStorage caching
+  // Logo comes only from the Firestore schoolLogo field. A saved browser copy
+  // used to keep showing an old image after the document was corrected.
   const schoolLogo = useMemo(() => {
     const targetSchoolName = schoolDisplayName || schoolName;
     if (!targetSchoolName || !firebaseSchools || !firebaseSchools.length) {
       return null;
     }
 
-    // Create a consistent cache key
-    const cacheKey = `schoolLogo_${targetSchoolName.toLowerCase().replace(/\s+/g, '_')}`;
-    
-    // Check localStorage first
-    const cachedLogo = localStorage.getItem(cacheKey);
-    if (cachedLogo) {
-      return cachedLogo;
-    }
-
-    // Find school in Firebase data
-    const firebaseSchool = firebaseSchools.find(school => 
+    const firebaseSchool = firebaseSchools.find(school =>
       school && school.schoolName && school.schoolName.toLowerCase() === targetSchoolName.toLowerCase()
     );
-    
-    if (firebaseSchool?.schoolLogo) {
-      // Cache the logo for future use
-      localStorage.setItem(cacheKey, firebaseSchool.schoolLogo);
-      return firebaseSchool.schoolLogo;
+    const logoUrl = firebaseSchool?.schoolLogo?.trim();
+    if (!logoUrl) {
+      return null;
     }
-    
-    return null;
-  }, [firebaseSchools.length, schoolDisplayName, schoolName]); // Only depend on length, not the entire array
+
+    try {
+      return new URL(logoUrl).protocol === "https:" ? logoUrl : null;
+    } catch {
+      return null;
+    }
+  }, [firebaseSchools, schoolDisplayName, schoolName]);
 
   // Stable rotating messages array - doesn't change based on score
   const rotatingMessages = [
