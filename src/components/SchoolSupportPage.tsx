@@ -4,7 +4,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { slugToSchoolName, findSchoolBySlug, schoolNameToSlug } from "../utils/schoolUtils";
 import { updateSchoolScoreByName, School, submitShareProof, getShareCountsBySchool, ShareLeaderboardEntry } from "../firebase/schoolService";
 import { useSchoolData } from "../contexts/SchoolDataContext";
-import { useOnlinePresence } from "../hooks/useOnlinePresence";
 import { ref, push, onValue, off, serverTimestamp, query, orderByChild, limitToLast, get, remove } from "firebase/database";
 import { realtimeDb } from "../firebase/config";
 import { ForestPausePopup } from "./ForestPausePopup";
@@ -67,7 +66,6 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
   const { schoolName } = useParams<{ schoolName: string }>();
   const navigate = useNavigate();
   const { schools: firebaseSchools } = useSchoolData();
-  const { totalOnline, isLoading: isOnlineLoading } = useOnlinePresence(schoolName || '');
   const [schoolDisplayName, setSchoolDisplayName] = useState("");
   
   
@@ -2966,20 +2964,6 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
               }`}>
                 <div className="flex items-center gap-2">
                   {schoolDisplayName}
-                  <div className="flex items-center gap-1 bg-support/10 rounded-md px-2 py-1 border border-support/20">
-                    <div className="w-2 h-2 bg-support rounded-full animate-pulse shadow-sm shadow-green-400/50"></div>
-                    <span className="font-pixelify text-support text-sm lg:text-base font-bold animate-pulse transition-all duration-300">
-                      {isOnlineLoading ? (
-                        <div className="flex items-center gap-1">
-                          <div className="w-1 h-1 bg-support rounded-full animate-bounce"></div>
-                          <div className="w-1 h-1 bg-support rounded-full animate-bounce delay-100"></div>
-                          <div className="w-1 h-1 bg-support rounded-full animate-bounce delay-200"></div>
-                        </div>
-                      ) : (
-                        `${totalOnline} online`
-                      )}
-                    </span>
-                  </div>
                 </div>
                 <div className="text-black text-sm lg:text-base font-pixelify font-normal tracking-[0] leading-[normal] opacity-70">
                   #{regionRank} in {schoolRegion}
@@ -3031,20 +3015,6 @@ export const SchoolSupportPage: React.FC<SchoolSupportPageProps> = ({ isMuted, o
             }`}>
               <div className="flex items-center gap-1 whitespace-nowrap">
                 {schoolDisplayName}
-                <div className="flex items-center gap-1 bg-support/10 rounded px-1.5 py-0.5 border border-support/20">
-                  <div className="w-1.5 h-1.5 bg-support rounded-full animate-pulse shadow-sm shadow-green-400/50"></div>
-                  <span className="font-pixelify text-support text-[10px] font-bold animate-pulse transition-all duration-300">
-                    {isOnlineLoading ? (
-                      <div className="flex items-center gap-0.5">
-                        <div className="w-0.5 h-0.5 bg-support rounded-full animate-bounce"></div>
-                        <div className="w-0.5 h-0.5 bg-support rounded-full animate-bounce delay-100"></div>
-                        <div className="w-0.5 h-0.5 bg-support rounded-full animate-bounce delay-200"></div>
-                      </div>
-                    ) : (
-                      `${totalOnline} online`
-                    )}
-                  </span>
-                </div>
               </div>
               <div className="text-black text-[10px] font-pixelify font-normal tracking-[0] leading-[normal] opacity-70">
                 #{regionRank} in {schoolRegion}
