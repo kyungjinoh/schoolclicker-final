@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { LoadingPage } from './components/LoadingPage';
+import { TributeLetterPopup } from './components/TributeLetterPopup';
 import { LandingPage } from './components/LandingPage';
 import { LeaderboardPage } from './components/LeaderboardPage';
 import { GamePage } from './components/GamePage';
@@ -31,6 +32,7 @@ function App() {
   const [firebaseLoaded, setFirebaseLoaded] = useState(false);
   const [backgroundMusic, setBackgroundMusic] = useState<HTMLAudioElement | null>(null);
   const [musicStarted, setMusicStarted] = useState(false);
+  const [showTributeLetter, setShowTributeLetter] = useState(true);
   const [isMuted, setIsMuted] = useState(() => {
     // Force default to muted (true) - clear any existing localStorage value
     localStorage.removeItem('isMuted');
@@ -184,6 +186,9 @@ function App() {
     <SchoolDataProvider>
       <Router>
         <div className="App" onClick={startMusic}>
+          {showTributeLetter && (
+            <TributeLetterPopup onClose={() => setShowTributeLetter(false)} />
+          )}
           <Routes>
             <Route path="/" element={<LandingPage isMuted={isMuted} onToggleMute={toggleMute} />} />
             <Route path="/leaderboard" element={<LeaderboardPage isMuted={isMuted} onToggleMute={toggleMute} />} />
